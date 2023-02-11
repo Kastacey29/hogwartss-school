@@ -5,6 +5,8 @@ import com.school.hogwartssschool.model.Avatar;
 import com.school.hogwartssschool.model.Student;
 import com.school.hogwartssschool.repositories.AvatarRepository;
 import com.school.hogwartssschool.repositories.StudentRepository;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
@@ -35,8 +37,11 @@ public class AvatarService {
     }
     @Value("${path.to.avatars.folder}")
     private String avatarsDir;
+
+    Logger logger = LoggerFactory.getLogger(AvatarService.class);
     public void uploadAvatar(Long studentId, MultipartFile avatarFile) throws IOException {
-        Student student = studentRepository.getStudentById(studentId);
+        logger.info("Вызван метод добавления аватарки студенту");
+        Student student = studentRepository.getStudentById(studentId).get();
         Path filePath = Path.of(avatarsDir, student + "." + getExtensions(avatarFile.getOriginalFilename()));
         Files.createDirectories(filePath.getParent());
         Files.deleteIfExists(filePath);
@@ -58,13 +63,18 @@ public class AvatarService {
     }
 
     public Avatar findAvatar(Long studentId) {
-        return avatarRepository.findByStudentId(studentId).orElse(new Avatar());
+        logger.info("Вызван метод получения аватарки");
+        Avatar avatar =  avatarRepository.findByStudentId(studentId).orElse(new Avatar());
+        logger.debug("По студенту с id {} найдена аватака", studentId);
+        return avatar;
     }
     private String getExtensions(String fileName) {
+        logger.info("Вызван метод получения расширения");
         return fileName.substring(fileName.lastIndexOf(".") + 1);
     }
 
     private byte[] generateImagePreview(Path filePath) throws IOException {
+        logger.info("Вызван метод сжатия аватарки");
         try (InputStream is = Files.newInputStream(filePath);
              BufferedInputStream bis = new BufferedInputStream(is, 1024);
              ByteArrayOutputStream baos = new ByteArrayOutputStream()) {
@@ -83,6 +93,7 @@ public class AvatarService {
     }
 
     public Collection<Avatar> findAll(Integer pageNumber, Integer pageSize) {
+        logger.info("Вызван метод получения аватарок на странице {}", pageNumber);
         var pageRequest = PageRequest.of(pageNumber-1,pageSize);
         return avatarRepository.findAll(pageRequest).getContent();
     }
