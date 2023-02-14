@@ -56,6 +56,12 @@ public class StudentController {
         return ResponseEntity.ok(resultFaculty);
     }
 
+    @GetMapping("/all/{letter}")
+    public ResponseEntity<Collection<String>> getAllOnLetter(@PathVariable Character letter) {
+        Collection<String> students = studentService.getAllOnLetter(letter);
+        return  ResponseEntity.ok(students);
+    }
+
     @GetMapping
     public ResponseEntity<Collection<Student>> getStudentsByAge(@RequestParam(required = false) Integer age,
                                                                 @RequestParam(required = false) Integer minAge,

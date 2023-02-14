@@ -25,7 +25,7 @@ public class StudentService {
         this.studentRepository = studentRepository;
     }
 
-    Logger logger = LoggerFactory.getLogger(StudentService.class);
+    private Logger logger = LoggerFactory.getLogger(StudentService.class);
     public Student createStudent(Student student) {
         logger.info("Вызван метод по созданию студента");
         return studentRepository.save(student);
@@ -90,18 +90,33 @@ public class StudentService {
         return count;
     }
 
+//    public Double findAverageAge() {
+//        logger.info("Вызван метод получения среднего возраста студентов");
+//        Double avgAge= studentRepository.findAverageAge();
+//        logger.debug("Средний возраст студентов: {}",avgAge);
+//        return avgAge;
+//    }
+
     public Double findAverageAge() {
         logger.info("Вызван метод получения среднего возраста студентов");
-        Double avgAge= studentRepository.findAverageAge();
+        Collection<Student> students = studentRepository.findAll();
+        Double avgAge = students.stream()
+                .collect(Collectors.averagingInt(Student::getAge));
         logger.debug("Средний возраст студентов: {}",avgAge);
         return avgAge;
     }
-
     public Collection<Student> findFiveLastStudents() {
         logger.info("Вызван метод получения последних пяти студентов");
         Collection<Student> students = studentRepository.findFiveLastStudents();
         logger.debug("Найдены последние пять студентов");
         return students;
+    }
+
+    public Collection<String> getAllOnLetter(Character letter) {
+        logger.info("Вызван метод получения студентов на букву {}", letter);
+        Collection<Student> students = studentRepository.findAll();
+       return students.stream().filter(s->s.getName().startsWith(String.valueOf(letter)))
+               .map(s->s.getName().toUpperCase()).sorted().collect(Collectors.toList());
     }
 }
 

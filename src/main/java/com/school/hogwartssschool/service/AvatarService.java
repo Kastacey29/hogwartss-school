@@ -38,7 +38,7 @@ public class AvatarService {
     @Value("${path.to.avatars.folder}")
     private String avatarsDir;
 
-    Logger logger = LoggerFactory.getLogger(AvatarService.class);
+    private Logger logger = LoggerFactory.getLogger(AvatarService.class);
     public void uploadAvatar(Long studentId, MultipartFile avatarFile) throws IOException {
         logger.info("Вызван метод добавления аватарки студенту");
         Student student = studentRepository.getStudentById(studentId).get();

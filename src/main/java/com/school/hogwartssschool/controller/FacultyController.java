@@ -48,6 +48,17 @@ public class FacultyController {
         return ResponseEntity.ok(faculty);
     }
 
+@GetMapping("/getInt")
+public int getInt() {
+        return facultyService.getInt();
+}
+
+    @GetMapping("/theLongest")
+        public ResponseEntity<Collection<String>> getLongestFacultyName() {
+        Collection<String> longestName = facultyService.getLongestFacultyName();
+        return ResponseEntity.ok(longestName);
+    }
+
     @PutMapping
     public ResponseEntity<Faculty> updateFaculty(@RequestBody Faculty faculty) {
         Faculty updatedFaculty = facultyService.updateFaculty(faculty.getId(), faculty);
