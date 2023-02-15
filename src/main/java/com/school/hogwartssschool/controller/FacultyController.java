@@ -54,8 +54,8 @@ public int getInt() {
 }
 
     @GetMapping("/theLongest")
-        public ResponseEntity<Collection<String>> getLongestFacultyName() {
-        Collection<String> longestName = facultyService.getLongestFacultyName();
+        public ResponseEntity<String> getLongestFacultyName() {
+        String longestName = facultyService.getLongestFacultyName();
         return ResponseEntity.ok(longestName);
     }
 
