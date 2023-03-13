@@ -7,12 +7,14 @@ import com.school.hogwartssschool.model.Student;
 import com.school.hogwartssschool.repositories.StudentRepository;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
 
 import java.util.Collection;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
@@ -30,6 +32,7 @@ public class StudentService {
         logger.info("Вызван метод по созданию студента");
         return studentRepository.save(student);
     }
+
 
     public Student getStudentById(Long studentID) {
         logger.info("Вызван метод поиска студента по id");
@@ -117,6 +120,58 @@ public class StudentService {
         Collection<Student> students = studentRepository.findAll();
        return students.stream().filter(s->s.getName().startsWith(String.valueOf(letter)))
                .map(s->s.getName().toUpperCase()).sorted().collect(Collectors.toList());
+    }
+
+
+    public synchronized void printNameOfStudentSync(List<Student> students) {
+        for (Student student : students) {
+            logger.info(student.getName());
+        }
+    }
+    public void printNameOfStudent(List<Student> students) {
+        for (Student student : students) {
+            logger.info(student.getName());
+        }
+        }
+
+    public void getNamesForThreads() {
+        logger.info("Вызван метод получения студентов для разных потоков");
+        List<Student> students = studentRepository.findAll(PageRequest.of(0,6)).getContent();
+
+
+        printNameOfStudent(students.subList(0,2));
+
+        Thread th1 = new Thread(()->{
+            printNameOfStudent(students.subList(2,4));
+        });
+
+        Thread th2 = new Thread(()->{
+            printNameOfStudent(students.subList(4,6));
+
+        });
+
+        th1.start();
+        th2.start();
+    }
+
+    public void getNamesForThreadsSync() {
+        logger.info("Вызван синхронизированный метод получения студентов для разных потоков");
+        List<Student> students = studentRepository.findAll(PageRequest.of(0,6)).getContent();
+
+
+        printNameOfStudentSync(students.subList(0,2));
+
+        Thread th1 = new Thread(()->{
+            printNameOfStudentSync(students.subList(2,4));
+        });
+
+        Thread th2 = new Thread(()->{
+            printNameOfStudentSync(students.subList(4,6));
+
+        });
+
+        th1.start();
+        th2.start();
     }
 }
 

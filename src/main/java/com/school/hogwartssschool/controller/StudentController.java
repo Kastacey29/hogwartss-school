@@ -31,6 +31,17 @@ public class StudentController {
         return studentService.findCountOfStudent();
     }
 
+    @GetMapping("/allForThreads")
+    public  ResponseEntity<Void> getNamesForThreads() {
+        studentService.getNamesForThreads();
+        return ResponseEntity.ok().build();
+    }
+    @GetMapping("/allForThreadsSynchronised")
+    public  ResponseEntity<Void> getNamesForThreadsSynchronised() {
+        studentService.getNamesForThreadsSync();
+        return ResponseEntity.ok().build();
+    }
+
     @GetMapping("/avgAge")
     public Double findAverageAge() {
         return studentService.findAverageAge();
